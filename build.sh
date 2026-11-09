@@ -34,7 +34,7 @@ codesign --verify --strict "$APP"
 
 cp -R "$APP" "$STAGE/"
 ln -s /Applications "$STAGE/Applications"
-cp "$ROOT/Resources/KURULUM.txt" "$STAGE/KURULUM - ONCE OKU.txt"
+cp "$ROOT/Resources/INSTALL.txt" "$STAGE/READ ME FIRST.txt"
 rm -f "$ROOT/dist/PrismLink.dmg"
 hdiutil create -quiet -volname PrismLink -srcfolder "$STAGE" -format UDZO "$ROOT/dist/PrismLink.dmg"
 

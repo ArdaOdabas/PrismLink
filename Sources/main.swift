@@ -88,7 +88,7 @@ enum PowerPoint {
 
     @discardableResult
     private static func run(_ body: String) throws -> String {
-        guard isRunning else { throw LinkError.message("PowerPoint açık değil.") }
+        guard isRunning else { throw LinkError.message("PowerPoint is not open.") }
         let source = """
         with timeout of 8 seconds
         tell application id "\(powerPointBundleID)"
@@ -98,12 +98,12 @@ enum PowerPoint {
         """
         var errorInfo: NSDictionary?
         guard let script = NSAppleScript(source: source) else {
-            throw LinkError.message("AppleScript oluşturulamadı.")
+            throw LinkError.message("Could not create the AppleScript.")
         }
         let result = script.executeAndReturnError(&errorInfo)
         if let errorInfo {
-            let text = errorInfo[NSAppleScript.errorMessage] as? String ?? "bilinmeyen hata"
-            throw LinkError.message("PowerPoint hatası: \(text)")
+            let text = errorInfo[NSAppleScript.errorMessage] as? String ?? "unknown error"
+            throw LinkError.message("PowerPoint error: \(text)")
         }
         return result.stringValue ?? ""
     }
@@ -137,7 +137,7 @@ enum PowerPoint {
         set countBefore to count of shapes of sl
         paste object (view of w)
         delay 0.4
-        if (count of shapes of sl) is not (countBefore + 1) then error "Pano yapıştırılamadı."
+        if (count of shapes of sl) is not (countBefore + 1) then error "Could not paste the clipboard."
         set oldShape to missing value
         repeat with i from 1 to count of shapes of sl
             if name of shape i of sl is "\(linkName)" then
@@ -145,7 +145,7 @@ enum PowerPoint {
                 exit repeat
             end if
         end repeat
-        if oldShape is missing value then error "Eski grafik bulunamadı."
+        if oldShape is missing value then error "Could not find the old graph."
         delete oldShape
         set newShape to shape (count of shapes of sl) of sl
         set width of newShape to oldWidth
@@ -185,7 +185,7 @@ enum Prism {
 
     static func open(_ project: URL) throws {
         guard let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: prismBundleID) else {
-            throw LinkError.message("Prism bulunamadı.")
+            throw LinkError.message("Prism was not found.")
         }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = true
@@ -221,9 +221,9 @@ final class SetupWindowController: NSObject {
             icon.heightAnchor.constraint(equalToConstant: 72)
         ])
 
-        let title = NSTextField(labelWithString: "PrismLink'e izin vermen gerekiyor")
+        let title = NSTextField(labelWithString: "PrismLink needs your permission")
         title.font = .boldSystemFont(ofSize: 17)
-        let intro = wrapping("PowerPoint'te çift tıklamayı algılamak ve açık Prism projesini bulmak için macOS izni gerekir. Sistem Ayarları'nda PrismLink'in anahtarını aç.")
+        let intro = wrapping("macOS permission lets PrismLink detect double-clicks in PowerPoint and find the open Prism project. Turn on the switch for PrismLink in System Settings.")
         let heading = NSStackView(views: [title, intro])
         heading.orientation = .vertical
         heading.alignment = .leading
@@ -234,24 +234,24 @@ final class SetupWindowController: NSObject {
         top.spacing = 16
 
         let modernRow = row(
-            version: "macOS 27 ve üzeri",
-            path: "Privacy & Security (Gizlilik ve Güvenlik) → Device Control and Data Access",
-            note: "Kenar çubuğundaki “Accessibility” bölümü değil.",
+            version: "macOS 27 and later",
+            path: "Privacy & Security → Device Control and Data Access",
+            note: "Not the “Accessibility” item in the sidebar.",
             isCurrent: isModern
         )
         let legacyRow = row(
-            version: "macOS 26 ve altı",
-            path: "Gizlilik ve Güvenlik (Privacy & Security) → Erişilebilirlik (Accessibility)",
+            version: "macOS 26 and earlier",
+            path: "Privacy & Security → Accessibility",
             note: nil,
             isCurrent: !isModern
         )
 
-        let footer = wrapping("PrismLink listede yoksa + düğmesiyle Applications klasöründen ekle. Anahtarı açınca bu pencere kendiliğinden kapanır.")
+        let footer = wrapping("If PrismLink isn't listed, add it from the Applications folder with the + button. This window closes by itself once the switch is on.")
         footer.textColor = .secondaryLabelColor
         footer.font = .systemFont(ofSize: 12)
 
-        let later = NSButton(title: "Sonra", target: self, action: #selector(dismiss))
-        let open = NSButton(title: "Sistem Ayarlarını Aç", target: self, action: #selector(openSettings))
+        let later = NSButton(title: "Later", target: self, action: #selector(dismiss))
+        let open = NSButton(title: "Open System Settings", target: self, action: #selector(openSettings))
         open.keyEquivalent = "\r"
         let spacer = NSView()
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -268,7 +268,7 @@ final class SetupWindowController: NSObject {
         }
 
         let newWindow = NSWindow(contentRect: .zero, styleMask: [.titled, .closable], backing: .buffered, defer: false)
-        newWindow.title = "PrismLink Kurulumu"
+        newWindow.title = "PrismLink Setup"
         newWindow.isReleasedWhenClosed = false
         let container = NSView()
         container.addSubview(content)
@@ -290,7 +290,7 @@ final class SetupWindowController: NSObject {
     }
 
     private func row(version: String, path: String, note: String?, isCurrent: Bool) -> NSView {
-        let name = NSTextField(labelWithString: isCurrent ? "\(version)  ·  bu Mac" : version)
+        let name = NSTextField(labelWithString: isCurrent ? "\(version)  ·  this Mac" : version)
         name.font = .boldSystemFont(ofSize: 13)
         name.textColor = isCurrent ? .controlAccentColor : .secondaryLabelColor
 
@@ -328,9 +328,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let setup = SetupWindowController()
     private let isPreview = CommandLine.arguments.contains("--preview-setup")
     private var statusItem: NSStatusItem!
-    private let statusLine = NSMenuItem(title: "Hazır", action: nil, keyEquivalent: "")
+    private let statusLine = NSMenuItem(title: "Ready", action: nil, keyEquivalent: "")
     private let permissionItem = NSMenuItem(title: "", action: #selector(requestAccessibility), keyEquivalent: "")
-    private let loginItem = NSMenuItem(title: "Oturum açılışında başlat", action: #selector(toggleLogin), keyEquivalent: "")
+    private let loginItem = NSMenuItem(title: "Launch at login", action: #selector(toggleLogin), keyEquivalent: "")
 
     private var monitor: Any?
     private var lastChangeCount = NSPasteboard.general.changeCount
@@ -355,13 +355,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(statusLine)
         menu.addItem(permissionItem)
         menu.addItem(.separator())
-        add("Seçili grafiği açık Prism projesine bağla", #selector(linkSelected), to: menu)
-        add("Seçili grafiğin Prism projesini aç", #selector(openSelected), to: menu)
-        add("Seçili grafiği panodakiyle güncelle", #selector(updateSelected), to: menu)
+        add("Link selected graph to open Prism project", #selector(linkSelected), to: menu)
+        add("Open Prism project of selected graph", #selector(openSelected), to: menu)
+        add("Update selected graph from clipboard", #selector(updateSelected), to: menu)
         menu.addItem(.separator())
         loginItem.target = self
         menu.addItem(loginItem)
-        add("Çıkış", #selector(quit), to: menu)
+        add("Quit", #selector(quit), to: menu)
         permissionItem.target = self
         statusItem.menu = menu
 
@@ -386,9 +386,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func refuseTemporaryLocation() {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
-        alert.messageText = "Önce Applications klasörüne taşı"
-        alert.informativeText = "PrismLink'i DMG penceresinden Applications klasörüne sürükle ve oradan aç. DMG içinden çalışan kopyaya verilen izin kalıcı olmaz."
-        alert.addButton(withTitle: "Tamam")
+        alert.messageText = "Move PrismLink to Applications first"
+        alert.informativeText = "Drag PrismLink from the disk image window to the Applications folder and open it from there. Permission granted to a copy running from the disk image does not last."
+        alert.addButton(withTitle: "OK")
         alert.runModal()
         NSApp.terminate(nil)
     }
@@ -401,7 +401,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func menuWillOpen(_ menu: NSMenu) {
         let trusted = AXIsProcessTrusted()
-        permissionItem.title = trusted ? "macOS izni: verildi" : "macOS izni ver…"
+        permissionItem.title = trusted ? "macOS permission: granted" : "Grant macOS permission…"
         permissionItem.isEnabled = !trusted
         loginItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
     }
@@ -445,7 +445,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
               pasteboard.availableType(from: imageTypes) != nil else { return }
         pendingProject = Prism.currentProject()
         if pendingProject == nil {
-            report("Prism projesi bulunamadı: dosyayı önce kaydet.", symbol: "!")
+            report("No Prism project found: save the file first.", symbol: "!")
         }
     }
 
@@ -466,27 +466,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func link(project: URL) throws {
         let record = try store.add(project: project)
         try PowerPoint.setSelectedShapeName(namePrefix + record.id)
-        report("Bağlandı: \(project.lastPathComponent)", symbol: "✓")
+        report("Linked: \(project.lastPathComponent)", symbol: "✓")
     }
 
     private func open(linkName: String) throws {
         let id = String(linkName.dropFirst(namePrefix.count))
         guard let project = store.projectURL(for: id) else {
-            throw LinkError.message("Bu grafiğin projesi bu Mac'te kayıtlı değil.")
+            throw LinkError.message("This graph's project is not registered on this Mac.")
         }
         try Prism.open(project)
-        report("Açılıyor: \(project.lastPathComponent)", symbol: "✓")
+        report("Opening: \(project.lastPathComponent)", symbol: "✓")
     }
 
     private func requireSelection() throws -> String {
         let name = try PowerPoint.selectedShapeName()
-        guard !name.isEmpty else { throw LinkError.message("PowerPoint'te bir grafik seç.") }
+        guard !name.isEmpty else { throw LinkError.message("Select a graph in PowerPoint.") }
         return name
     }
 
     private func requireLinkedSelection() throws -> String {
         let name = try requireSelection()
-        guard name.hasPrefix(namePrefix) else { throw LinkError.message("Seçili grafik bağlı değil.") }
+        guard name.hasPrefix(namePrefix) else { throw LinkError.message("The selected graph is not linked.") }
         return name
     }
 
@@ -494,7 +494,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         attempt {
             _ = try requireSelection()
             guard let project = Prism.currentProject() else {
-                throw LinkError.message("Kayıtlı bir Prism projesi açık değil.")
+                throw LinkError.message("No saved Prism project is open.")
             }
             try link(project: project)
         }
@@ -508,10 +508,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         attempt {
             let name = try requireLinkedSelection()
             guard NSPasteboard.general.availableType(from: imageTypes) != nil else {
-                throw LinkError.message("Panoda grafik yok: önce Prism'de kopyala.")
+                throw LinkError.message("No graph on the clipboard: copy it in Prism first.")
             }
             try PowerPoint.replaceSelectedShape(linkName: name)
-            report("Grafik güncellendi", symbol: "✓")
+            report("Graph updated", symbol: "✓")
         }
     }
 
