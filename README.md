@@ -47,3 +47,7 @@ Xcode Komut Satırı Araçları gerekir.
 ```
 
 Çıktı `dist/PrismLink.dmg` dosyasıdır. İkon `Tools/make_icon.swift` ile üretilir.
+
+## Lisans
+
+[MIT](LICENSE)
