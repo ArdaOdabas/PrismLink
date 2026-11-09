@@ -365,10 +365,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         permissionItem.target = self
         statusItem.menu = menu
 
+        enableLaunchAtLoginOnFirstRun()
         if isPreview || !AXIsProcessTrusted() { setup.show() }
         Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { [weak self] _ in self?.pollPasteboard() }
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in self?.installMonitorIfTrusted() }
         installMonitorIfTrusted()
+    }
+
+    /// Runs once, so turning the option off in the menu stays respected.
+    private func enableLaunchAtLoginOnFirstRun() {
+        let key = "didEnableLaunchAtLoginOnFirstRun"
+        guard !isPreview, !UserDefaults.standard.bool(forKey: key) else { return }
+        attempt {
+            try SMAppService.mainApp.register()
+            UserDefaults.standard.set(true, forKey: key)
+        }
     }
 
     /// A copy running from the disk image would lose its permission on eject.
@@ -542,6 +553,11 @@ func runSelfTest(_ arguments: [String]) -> Bool {
         case "--selftest-name": try PowerPoint.setSelectedShapeName(arguments[1]); print("ok")
         case "--selftest-replace": try PowerPoint.replaceSelectedShape(linkName: arguments[1]); print("ok")
         case "--selftest-project": print(Prism.currentProject()?.path ?? "<none>")
+        case "--selftest-login":
+            if arguments.count > 1 {
+                if arguments[1] == "on" { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
+            }
+            print(SMAppService.mainApp.status.rawValue)
         default: print("unknown command"); exit(2)
         }
     } catch {

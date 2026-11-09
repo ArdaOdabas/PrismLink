@@ -29,6 +29,8 @@ Prism'e veya PowerPoint'e hiçbir eklenti kurulmaz. Şekle yalnızca bir kimlik 
 
 5. İlk kullanımda çıkan PowerPoint erişim isteğini onayla.
 
+PrismLink ilk açılışta kendini oturum açılışına ekler ve Mac her açıldığında arka planda başlar. İstemezsen menü çubuğundaki **Oturum açılışında başlat** seçeneğini kapat.
+
 ## Sınırlamalar
 
 - Bağlantılar yalnızca grafiği bağlayan Mac'te çalışır; sunumu başka bir Mac'e taşırsan proje bilgisi gitmez.
