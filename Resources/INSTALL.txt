@@ -1,0 +1,25 @@
+Installing PrismLink
+====================
+
+1. Drag PrismLink to the Applications folder in this window.
+   Do not run it directly from the disk image.
+
+2. Open PrismLink from the Applications folder.
+   If macOS says it can't be opened or verified:
+   go to System Settings > Privacy & Security, scroll to the bottom,
+   and click "Open Anyway" for PrismLink.
+
+3. Grant the macOS permission. PrismLink shows a window that explains this
+   step, with a button that opens the right page.
+
+   macOS 27 and later:
+     Privacy & Security > Device Control and Data Access
+     Note: this is not the "Accessibility" item in the sidebar.
+
+   macOS 26 and earlier:
+     Privacy & Security > Accessibility
+
+   If PrismLink isn't listed, add it from the Applications folder with the
+   + button.
+
+4. Approve the PowerPoint access request the first time it appears.

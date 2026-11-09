@@ -15,14 +15,14 @@
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.3.0</string>
+	<string>0.3.1</string>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>PrismLink, PowerPoint'te seçili grafiği Prism projesine bağlamak için PowerPoint'e erişir.</string>
+	<string>PrismLink accesses PowerPoint to link the selected graph to its Prism project.</string>
 </dict>
 </plist>
