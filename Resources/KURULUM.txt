@@ -1,0 +1,24 @@
+PrismLink Kurulumu
+==================
+
+1. PrismLink'i bu penceredeki Applications klasörüne sürükleyin.
+   DMG içinden doğrudan çalıştırmayın.
+
+2. Applications klasöründen PrismLink'i açın.
+   macOS "açılamadı" veya "doğrulanamadı" derse:
+   Sistem Ayarları > Privacy & Security (Gizlilik ve Güvenlik) bölümünü
+   en alta kaydırın ve PrismLink için "Open Anyway" (Yine de Aç) düğmesine basın.
+
+3. Uygulamaya macOS izni verin. PrismLink açılınca bu adımı anlatan bir
+   pencere gösterir ve doğru sayfayı açan bir düğme sunar.
+
+   macOS 27 ve üzeri:
+     Privacy & Security (Gizlilik ve Güvenlik) > Device Control and Data Access
+     Dikkat: Kenar çubuğundaki "Accessibility" bölümü değil.
+
+   macOS 26 ve altı:
+     Gizlilik ve Güvenlik (Privacy & Security) > Erişilebilirlik (Accessibility)
+
+   PrismLink listede yoksa + düğmesiyle Applications klasöründen ekleyin.
+
+4. İlk kullanımda çıkan PowerPoint erişim isteğini onaylayın.
